@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mapona · Rainy Room</title>
+  <meta name="description" content="A tiny isometric pixel-art room floating over a rainy neon Japanese city, with a lofi TV on the wall.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="game" aria-label="Isometric room over a rainy neon city"></canvas>
+
+  <!-- The YouTube player lives here; JS skews it onto the TV on the wall. -->
+  <div id="tv-screen">
+    <div id="yt"></div>
+    <div class="scan"></div>
+    <div class="glare"></div>
+  </div>
+
+  <div id="bubbles"></div>
+
+  <header id="hud">
+    <div class="brand"><span class="kanji">雨</span> MAPONA</div>
+    <div class="tips">click the floor to walk · walk up to the TV and click it</div>
+  </header>
+
+  <div id="sound-hint" class="pill">♪ click anywhere to turn the sound on</div>
+  <div id="move-hint" class="pill" hidden>moving the TV — hover a wall, click to hang it · <kbd>Esc</kbd> to cancel</div>
+
+  <div id="focus-backdrop" hidden>
+    <button id="focus-close" class="btn" type="button">✕ back to the room</button>
+  </div>
+
+  <section id="tv-panel" class="window" hidden aria-label="TV controls">
+    <div class="win-title" id="tv-drag">
+      <span>📺 ネオンTV</span>
+      <button class="win-x" id="tv-close" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="win-body">
+      <div>
+        <div class="label">NOW PLAYING</div>
+        <div id="tv-title">—</div>
+      </div>
+
+      <div class="row">
+        <button class="btn" id="tv-prev" type="button" title="Previous">|◀</button>
+        <button class="btn primary" id="tv-play" type="button" title="Play / pause">▶</button>
+        <button class="btn" id="tv-next" type="button" title="Next">▶|</button>
+        <button class="btn" id="tv-mute" type="button" title="Mute">🔊</button>
+        <input id="tv-vol" type="range" min="0" max="100" value="70" aria-label="Volume">
+      </div>
+
+      <form id="tv-form">
+        <label class="label" for="tv-url">CHANGE CHANNEL</label>
+        <div class="row">
+          <input id="tv-url" type="text" placeholder="YouTube link, video id or playlist" autocomplete="off" spellcheck="false">
+          <button class="btn primary" type="submit">Tune</button>
+        </div>
+      </form>
+      <div id="tv-msg" class="msg" role="status"></div>
+
+      <div class="row">
+        <button class="btn grow" id="tv-watch" type="button">⛶ Watch</button>
+        <button class="btn grow" id="tv-move" type="button">✥ Move TV</button>
+        <button class="btn grow" id="tv-power" type="button">⏻ Off</button>
+      </div>
+      <button class="link" id="tv-reset" type="button">back to the default lofi channel</button>
+    </div>
+  </section>
+
+  <script src="js/util.js"></script>
+  <script src="js/room.js"></script>
+  <script src="js/avatar.js"></script>
+  <script src="js/city.js"></script>
+  <script src="js/tv.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

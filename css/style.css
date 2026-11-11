@@ -1,0 +1,239 @@
+:root {
+  --ink: #efe9ff;
+  --dim: #a79cc7;
+  --panel: #16121f;
+  --edge: #3a2e55;
+  --edge-hi: #5b4a85;
+  --pink: #ff4fd8;
+  --cyan: #3ff5ff;
+  --yellow: #ffe14f;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #07040f;
+  color: var(--ink);
+  font-family: "DotGothic16", ui-monospace, monospace;
+}
+
+[hidden] { display: none !important; }
+
+#game {
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: block;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  touch-action: manipulation;
+}
+#game.pointer { cursor: pointer; }
+#game.moving { cursor: move; }
+
+/* ---------- TV screen (YouTube iframe, skewed onto the wall) ---------- */
+#tv-screen {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 480px;
+  height: 270px;
+  transform-origin: 0 0;
+  z-index: 1;
+  pointer-events: none;
+  background: #000;
+  overflow: hidden;
+  will-change: transform;
+}
+#tv-screen iframe,
+#tv-screen #yt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  pointer-events: none;
+}
+/* one scanline per room pixel so the video blends with the pixel art */
+#tv-screen .scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(180deg,
+    rgba(0, 0, 0, .32) 0 calc(270px / 58),
+    transparent calc(270px / 58) calc(270px / 29));
+}
+#tv-screen .glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255, 255, 255, .10) 0 22%, transparent 22% 100%);
+}
+#tv-screen.off { visibility: hidden; }
+#tv-screen.anim { transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+#tv-screen.focus {
+  z-index: 20;
+  pointer-events: auto;
+  box-shadow: 0 0 0 2px #1b1a22, 0 0 0 4px #000, 0 0 40px rgba(63, 245, 255, .35);
+}
+#tv-screen.focus iframe { pointer-events: auto; }
+#tv-screen.focus .scan { opacity: .2; }
+#tv-screen.focus .glare { opacity: .35; }
+
+#focus-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  background: rgba(5, 3, 10, .85);
+}
+#focus-close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+}
+
+/* ---------- HUD ---------- */
+#hud {
+  position: fixed;
+  left: 16px;
+  top: 14px;
+  z-index: 5;
+  pointer-events: none;
+  text-shadow: 0 2px 0 #000;
+}
+#hud .brand { font-size: 22px; letter-spacing: 2px; color: #fff; }
+#hud .kanji { color: var(--pink); text-shadow: 0 0 8px var(--pink), 0 2px 0 #000; }
+#hud .tips { font-size: 13px; color: var(--dim); margin-top: 2px; }
+
+.pill {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  max-width: calc(100vw - 32px);
+  padding: 8px 14px;
+  font-size: 14px;
+  background: var(--panel);
+  border: 2px solid #000;
+  box-shadow: inset 0 0 0 2px var(--edge-hi), 4px 4px 0 rgba(0, 0, 0, .6);
+  text-align: center;
+  pointer-events: none;
+}
+#sound-hint { bottom: 18px; animation: pulse 1.6s steps(2) infinite; }
+#move-hint { top: 14px; color: var(--yellow); }
+kbd { font-family: inherit; padding: 0 4px; border: 1px solid var(--dim); }
+@keyframes pulse { 50% { color: var(--cyan); } }
+
+/* ---------- speech bubbles ---------- */
+#bubbles {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+.bubble {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  background: #fff;
+  color: #111;
+  border: 2px solid #000;
+  border-radius: 6px;
+  padding: 4px 9px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, .35);
+  animation: rise 4s ease-out forwards;
+}
+.bubble b { color: #8a1f86; margin-right: 4px; }
+@keyframes rise {
+  0% { opacity: 0; margin-top: 8px; }
+  8% { opacity: 1; margin-top: 0; }
+  75% { opacity: 1; }
+  100% { opacity: 0; margin-top: -34px; }
+}
+
+/* ---------- TV window ---------- */
+.window {
+  position: fixed;
+  z-index: 30;
+  width: min(350px, calc(100vw - 32px));
+  background: var(--panel);
+  border: 2px solid #000;
+  box-shadow: inset 0 0 0 2px var(--edge-hi), 6px 6px 0 rgba(0, 0, 0, .6);
+}
+.win-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 6px 5px 12px;
+  margin: 2px 2px 0;
+  background: linear-gradient(90deg, #6a1d72, #1d3f72);
+  border-bottom: 2px solid #000;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  font-size: 15px;
+}
+.win-x {
+  width: 26px;
+  height: 26px;
+  font: inherit;
+  color: #fff;
+  background: #b0263f;
+  border: 2px solid #000;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .25);
+  cursor: pointer;
+  line-height: 1;
+}
+.win-body { padding: 12px 14px 14px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.win-body > *, .row > * { min-width: 0; }
+.label { font-size: 11px; color: var(--dim); letter-spacing: 1px; display: block; margin-bottom: 4px; }
+#tv-title { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--cyan); }
+.row { display: flex; gap: 6px; align-items: center; }
+.grow { flex: 1; }
+
+button, input { font: inherit; color: inherit; }
+.btn {
+  background: #2a2140;
+  border: 2px solid #000;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .14), inset 0 -2px 0 rgba(0, 0, 0, .35);
+  padding: 5px 9px;
+  min-height: 34px;
+  cursor: pointer;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.btn:hover { background: #3a2d5a; }
+.btn:active { transform: translateY(1px); }
+.btn.primary { background: #7a1f78; }
+.btn.primary:hover { background: #962593; }
+
+input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  background: #0b0912;
+  border: 2px solid #000;
+  box-shadow: inset 0 0 0 1px var(--edge);
+  padding: 6px 8px;
+  min-height: 34px;
+}
+input[type="range"] { flex: 1; min-width: 50px; accent-color: var(--pink); }
+.msg { font-size: 12px; color: var(--yellow); min-height: 1em; margin-top: -4px; }
+.link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--dim);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 12px;
+  justify-self: start;
+}
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+@media (max-width: 520px) {
+  #hud .tips { display: none; }
+}
